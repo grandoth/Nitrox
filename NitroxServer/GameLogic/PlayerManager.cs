@@ -136,7 +136,9 @@ namespace NitroxServer.GameLogic
             assetPackage.ReservationKey = null;
             reservations.Remove(reservationKey);
 
-            Log.Info($"{playerContext.PlayerName} joined.");
+            string message = playerContext.PlayerName + " joined.";
+            SendPacketToAllPlayers(new ChatMessage(ChatMessage.SERVER_ID, message));
+            Log.Info(message);
 
             if (ConnectedPlayers().Count() == 1)
             {
@@ -159,15 +161,19 @@ namespace NitroxServer.GameLogic
             {
                 PlayerContext playerContext = reservations[assetPackage.ReservationKey];
                 reservedPlayerNames.Remove(playerContext.PlayerName);
-                Log.Info($"Reservation for {playerContext.PlayerName} removed.");
                 reservations.Remove(assetPackage.ReservationKey);
+                string message = $"Reservation for {playerContext.PlayerName} removed.";
+                SendPacketToAllPlayers(new ChatMessage(ChatMessage.SERVER_ID, message));
+                Log.Info(message);
             }
 
             if (assetPackage.Player != null)
             {
                 Player player = assetPackage.Player;
-                Log.Info($"{player.Name} disconnected.");
                 reservedPlayerNames.Remove(player.Name);
+                string message = player.Name + " disconnected.";
+                SendPacketToAllPlayers(new ChatMessage(ChatMessage.SERVER_ID, message));
+                Log.Info(message);
             }
 
             assetsByConnection.Remove(connection);
