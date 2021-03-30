@@ -5,6 +5,7 @@ using NitroxModel.DataStructures;
 using NitroxModel.DataStructures.GameLogic;
 using NitroxModel.DataStructures.Util;
 using NitroxModel.Helper;
+using NitroxModel.Logger;
 using NitroxModel.MultiplayerSession;
 using NitroxModel.Packets;
 using NitroxModel.Server;
@@ -135,6 +136,8 @@ namespace NitroxServer.GameLogic
             assetPackage.ReservationKey = null;
             reservations.Remove(reservationKey);
 
+            Log.Info($"{playerContext.PlayerName} joined.");
+
             if (ConnectedPlayers().Count() == 1)
             {
                 Server.Instance.ResumeServer();
@@ -146,6 +149,7 @@ namespace NitroxServer.GameLogic
         public void PlayerDisconnected(NitroxConnection connection)
         {
             assetsByConnection.TryGetValue(connection, out ConnectionAssets assetPackage);
+
             if (assetPackage == null)
             {
                 return;
@@ -155,16 +159,19 @@ namespace NitroxServer.GameLogic
             {
                 PlayerContext playerContext = reservations[assetPackage.ReservationKey];
                 reservedPlayerNames.Remove(playerContext.PlayerName);
+                Log.Info($"Reservation for {playerContext.PlayerName} removed.");
                 reservations.Remove(assetPackage.ReservationKey);
             }
 
             if (assetPackage.Player != null)
             {
                 Player player = assetPackage.Player;
+                Log.Info($"{player.Name} disconnected.");
                 reservedPlayerNames.Remove(player.Name);
             }
 
             assetsByConnection.Remove(connection);
+
 
             if (ConnectedPlayers().Count() == 0)
             {
