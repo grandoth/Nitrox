@@ -135,7 +135,7 @@ namespace NitroxServer.GameLogic
             assetPackage.Player = player;
             assetPackage.ReservationKey = null;
             reservations.Remove(reservationKey);
-            Log.Info(playerContext.PlayerName + " joined.");
+            Log.Info(playerContext.PlayerName + " joined the game.");
 
             if (ConnectedPlayers().Count() == 1)
             {
